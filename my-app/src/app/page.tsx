@@ -1,103 +1,83 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [title, setTitle] = useState("title");
+  const [content, setContent] = useState("This is generated content.");
+  const [bg, setBg] = useState("#e5e7eb");
+  const [fg, setFg] = useState("#111827");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const html = useMemo(() => {
+    const esc = (s: string) => s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+
+    const btnId = "btn-" + Math.random().toString(36).slice(2, 8);
+    return `<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8" />\n  <meta name="viewport" content="width=device-width, initial-scale=1" />\n  <title>${esc(title)}</title>\n</head>\n<body style="margin:0;padding:24px;background:${bg};color:${fg};font-family:Arial,Helvetica,sans-serif;">\n  <main style="max-width:900px;margin:auto;">\n    <h1 style="margin:0 0 16px 0;font-size:28px;">${esc(title)}</h1>\n    <p style="margin:0 0 16px 0;">${esc(content)}</p>\n    <button id="${btnId}" style="border:1px solid ${fg};border-bottom-left-radius:6px;border-radius:8px;padding:8px 12px;background:transparent;color:${fg};">click me</button>\n  </main>\n  <script>\n    document.getElementById('${btnId}').addEventListener('click', function(){\n      alert('Button clicked!');\n    });\n  <\/script>\n</body>\n</html>`;
+  }, [title, content, bg, fg]);
+
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    const doc = iframe.contentDocument;
+    if (!doc) return;
+    doc.open();
+    doc.write(html);
+    doc.close();
+  }, [html]);
+
+  const copy = async () => {
+    await navigator.clipboard.writeText(html);
+    alert("Copied!");
+  };
+
+  return (
+    <div>
+      <h1 style={{fontSize:20, marginBottom:12}}>HTML5 Code Generator</h1>
+
+      <div className="grid-2">
+        <section className="card" aria-labelledby="form-heading">
+          <h2 id="form-heading" style={{marginTop:0}}>Inputs</h2>
+          <div className="grid-2">
+            <div>
+              <label htmlFor="title">Title</label>
+              <input id="title" type="text" value={title} onChange={e=>setTitle(e.target.value)} />
+            </div>
+            <div>
+              <label htmlFor="content">Content</label>
+              <input id="content" type="text" value={content} onChange={e=>setContent(e.target.value)} />
+            </div>
+            <div>
+              <label htmlFor="bg">Background</label>
+              <input id="bg" type="color" value={bg} onChange={e=>setBg(e.target.value)} aria-label="Background color" />
+            </div>
+            <div>
+              <label htmlFor="fg">Text color</label>
+              <input id="fg" type="color" value={fg} onChange={e=>setFg(e.target.value)} aria-label="Text color" />
+            </div>
+          </div>
+
+          <div style={{marginTop:16}}>
+            <h3 style={{marginTop:0}}>Generated HTML</h3>
+            <textarea
+              aria-label="Generated HTML"
+              rows={16}
+              value={html}
+              readOnly
+              style={{width:"100%", fontFamily:"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace", fontSize:12}}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <button className="btn" onClick={copy} style={{marginTop:8}}>Copy</button>
+          </div>
+        </section>
+
+        <section className="card" aria-labelledby="preview-heading">
+          <h2 id="preview-heading" style={{marginTop:0}}>Live Preview</h2>
+          <iframe ref={iframeRef} title="Live preview" style={{width:"100%", height:360, border:"1px solid #444", borderRadius:8, background:"white"}} />
+        </section>
+      </div>
     </div>
   );
 }
