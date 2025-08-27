@@ -52,17 +52,82 @@ export default function Header({ studentNumber }: { studentNumber: string }) {
         <div style={{display:"flex",alignItems:"center",gap:12}}>
           <strong aria-label="Student number" style={{fontWeight:800}}>{studentNumber}</strong>
           <button
-            className="btn"
+            className="hamburger-btn"
             aria-label="Menu"
             aria-expanded={open}
             aria-controls="main-menu"
             onClick={() => setOpen(v => !v)}
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              padding: "8px",
+              position: "relative",
+              width: "32px",
+              height: "32px"
+            }}
           >
-            ☰
+            <div 
+              className="hamburger-line"
+              style={{
+                width: "20px",
+                height: "2px",
+                background: "var(--foreground)",
+                position: "absolute",
+                left: "6px",
+                top: "8px",
+                transition: "all 0.3s ease",
+                transform: open ? "rotate(45deg) translate(5px, 5px)" : "none"
+              }}
+            />
+            <div 
+              className="hamburger-line"
+              style={{
+                width: "20px",
+                height: "2px",
+                background: "var(--foreground)",
+                position: "absolute",
+                left: "6px",
+                top: "15px",
+                transition: "all 0.3s ease",
+                opacity: open ? "0" : "1"
+              }}
+            />
+            <div 
+              className="hamburger-line"
+              style={{
+                width: "20px",
+                height: "2px",
+                background: "var(--foreground)",
+                position: "absolute",
+                left: "6px",
+                top: "22px",
+                transition: "all 0.3s ease",
+                transform: open ? "rotate(-45deg) translate(7px, -6px)" : "none"
+              }}
+            />
           </button>
         </div>
-        <nav id="main-menu" role="navigation" aria-label="Main" style={{display: open ? "block" : "none"}}>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+        <nav 
+          id="main-menu" 
+          role="navigation" 
+          aria-label="Main" 
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: "0",
+            right: "0",
+            background: "var(--background)",
+            border: "1px solid color-mix(in oklab, var(--foreground), #000 85%)",
+            borderTop: "none",
+            transform: open ? "translateY(0)" : "translateY(-10px)",
+            opacity: open ? "1" : "0",
+            visibility: open ? "visible" : "hidden",
+            transition: "all 0.3s ease",
+            zIndex: 1000
+          }}
+        >
+          <div style={{display:"flex",gap:8,flexWrap:"wrap",padding:"16px"}}>
             <NavLink href="/" label="Home" />
             <NavLink href="/about" label="About" />
             <NavLink href="/escape-room" label="Escape Room" />

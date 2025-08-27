@@ -60,6 +60,7 @@ button, input, select, textarea {
 .header, .footer {
   width: 100%;
   border-bottom: 1px solid color-mix(in oklab, var(--foreground), #000 85%);
+  position: relative;
 }
 .footer { border-bottom: none; border-top: 1px solid color-mix(in oklab, var(--foreground), #000 85%); }
 
@@ -89,6 +90,16 @@ label { font-weight: 600; }
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px color-mix(in oklab, var(--foreground), #000 30%);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 .btn.secondary {
   background: color-mix(in oklab, var(--foreground), #000 20%);

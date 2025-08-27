@@ -14,26 +14,53 @@ function setCookie(name: string, value: string, days = 365) {
 }
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark" | "auto">("auto");
 
   useEffect(() => {
     const fromCookie = getCookie("theme");
     const systemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initial = (fromCookie === "dark" || fromCookie === "light") ? (fromCookie as "light"|"dark") : (systemDark ? "dark" : "light");
+    
+    let initial: "light" | "dark" | "auto" = "auto";
+    if (fromCookie === "dark" || fromCookie === "light" || fromCookie === "auto") {
+      initial = fromCookie as "light" | "dark" | "auto";
+    }
+    
     setTheme(initial);
-    document.documentElement.setAttribute("data-theme", initial);
+    applyTheme(initial, systemDark);
   }, []);
 
+  const applyTheme = (selectedTheme: "light" | "dark" | "auto", systemDark: boolean) => {
+    if (selectedTheme === "auto") {
+      document.documentElement.setAttribute("data-theme", systemDark ? "dark" : "light");
+    } else {
+      document.documentElement.setAttribute("data-theme", selectedTheme);
+    }
+  };
+
   const toggle = () => {
-    const next = theme === "dark" ? "light" : "dark";
+    const themes: ("light" | "dark" | "auto")[] = ["light", "dark", "auto"];
+    const currentIndex = themes.indexOf(theme);
+    const next = themes[(currentIndex + 1) % themes.length];
+    
     setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
     setCookie("theme", next);
+    
+    const systemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    applyTheme(next, systemDark);
+  };
+
+  const getThemeLabel = () => {
+    switch(theme) {
+      case "light": return "☀️ Light";
+      case "dark": return "🌙 Dark";
+      case "auto": return "🔄 Auto";
+      default: return "Theme";
+    }
   };
 
   return (
-    <button className="btn secondary" onClick={toggle} aria-label="Toggle theme">
-      {theme === "dark" ? "Light" : "Dark"} Mode
+    <button className="btn secondary" onClick={toggle} aria-label="Toggle theme" title={`Current: ${theme} theme`}>
+      {getThemeLabel()}
     </button>
   );
 }
