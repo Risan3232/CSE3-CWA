@@ -30,7 +30,6 @@ export default function Header({ studentNumber }: { studentNumber: string }) {
   }, [activePath]);
 
   useEffect(() => {
-    // close on route change
     const onHash = () => setOpen(false);
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);

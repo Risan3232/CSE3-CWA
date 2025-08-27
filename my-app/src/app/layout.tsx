@@ -24,8 +24,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const studentName = "Risan Shrestha"; // updated
-  const studentNumber = "21662159"; // updated
+  const studentName = "Risan Shrestha"; 
+  const studentNumber = "21662159"; 
 
   return (
     <html lang="en">

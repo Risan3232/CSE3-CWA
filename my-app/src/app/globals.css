@@ -7,7 +7,6 @@
   --muted: #e5e7eb;
 }
 
-/* Explicit theme override via data-theme attribute so users can toggle regardless of system prefs */
 :root[data-theme="light"] {
   --background: #ffffff;
   --foreground: #171717;
@@ -31,13 +30,12 @@ body {
   line-height: 1.5;
 }
 
-/* A11y helpers */
 .visually-hidden {
   position: absolute !important;
   height: 1px; width: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
-  white-space: nowrap; /* added line */
+  white-space: nowrap;
 }
 
 a { color: inherit; }
@@ -46,7 +44,7 @@ button, input, select, textarea {
   font: inherit;
 }
 
-/* Simple container and card styles used across pages */
+
 .container {
   max-width: 1200px;
   margin: 0 auto;

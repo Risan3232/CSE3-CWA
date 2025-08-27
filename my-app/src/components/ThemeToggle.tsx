@@ -17,7 +17,6 @@ export default function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
-    // Initialize from cookie or prefers-color-scheme
     const fromCookie = getCookie("theme");
     const systemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
     const initial = (fromCookie === "dark" || fromCookie === "light") ? (fromCookie as "light"|"dark") : (systemDark ? "dark" : "light");
