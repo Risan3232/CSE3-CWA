@@ -11,7 +11,7 @@ export default function About() {
       <div style={{position:"relative", paddingTop:"56.25%", borderRadius:8, overflow:"hidden", border:"1px solid #555", background:"#000"}}>
         <iframe
           title="How to use this website"
-          src="https://www.youtube.com/embed/LORz7dr5xQ4" 
+          src="https://www.youtube.com/embed/uwYdmdin8ro" 
           style={{position:"absolute", inset:0, width:"100%", height:"100%", border:0}}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
