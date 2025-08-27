@@ -3,17 +3,22 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --accent: #3b82f6;
+  --muted: #e5e7eb;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Explicit theme override via data-theme attribute so users can toggle regardless of system prefs */
+:root[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+:root[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
@@ -23,4 +28,79 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+/* A11y helpers */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap; /* added line */
+}
+
+a { color: inherit; }
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+/* Simple container and card styles used across pages */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+.card {
+  background: color-mix(in oklab, var(--background), #000 6%);
+  border: 1px solid color-mix(in oklab, var(--foreground), #000 85%);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.header, .footer {
+  width: 100%;
+  border-bottom: 1px solid color-mix(in oklab, var(--foreground), #000 85%);
+}
+.footer { border-bottom: none; border-top: 1px solid color-mix(in oklab, var(--foreground), #000 85%); }
+
+.nav-link {
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+.nav-link[aria-current="page"] {
+  outline: 2px solid var(--accent);
+}
+
+input[type="text"], input[type="url"], input[type="color"], textarea {
+  width: 100%;
+  border: 1px solid color-mix(in oklab, var(--foreground), #000 85%);
+  background: color-mix(in oklab, var(--background), #000 8%);
+  color: var(--foreground);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+label { font-weight: 600; }
+
+.btn {
+  background: var(--foreground);
+  color: var(--background);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btn.secondary {
+  background: color-mix(in oklab, var(--foreground), #000 20%);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 900px) {
+  .grid-2 { grid-template-columns: 1fr 1fr; }
 }
