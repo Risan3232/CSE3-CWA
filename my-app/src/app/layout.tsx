@@ -24,8 +24,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const studentName = "Elon Shrestha"; // TODO: update
-  const studentNumber = "21740764"; // top-left on each page
+  const studentName = "Risan Shrestha"; // updated
+  const studentNumber = "21662159"; // updated
 
   return (
     <html lang="en">

@@ -3,9 +3,9 @@ export default function About() {
     <div className="card">
       <h1 style={{marginTop:0}}>About</h1>
       <p>
-        Name: Elon Shrestha
+        Name: Risan Shrestha
         <br />
-        Student number: 21740764
+        Student number: 21662159
       </p>
       <p>How to use: Fill in the inputs on the Home page, copy the generated HTML and paste it into a .html file or Moodle HTML block.</p>
       <div style={{position:"relative", paddingTop:"56.25%", borderRadius:8, overflow:"hidden", border:"1px solid #555", background:"#000"}}>
