@@ -130,9 +130,9 @@ export default function Header({ studentNumber }: { studentNumber: string }) {
           <div style={{display:"flex",gap:8,flexWrap:"wrap",padding:"16px"}}>
             <NavLink href="/" label="Home" />
             <NavLink href="/about" label="About" />
+            <NavLink href="/court-room" label="Court Room" />
             <NavLink href="/escape-room" label="Escape Room" />
             <NavLink href="/coding-races" label="Coding Races" />
-            <NavLink href="/court-room" label="Court Room" />
           </div>
         </nav>
         <ThemeToggle />
