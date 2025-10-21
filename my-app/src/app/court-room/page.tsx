@@ -10,12 +10,27 @@ export default function CourtRoom() {
   const [messages, setMessages] = useState<string[]>([]);
   const [stage, setStage] = useState(1);
   const [code, setCode] = useState("console.log('Hello World')");
+  const [sessions, setSessions] = useState<any[]>([]); // For loading sessions
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Debug logging
   useEffect(() => {
     console.log("Game state:", { timer, messages, stage });
   }, [timer, messages, stage]);
+
+  // Load sessions on mount
+  useEffect(() => {
+    const loadSessions = async () => {
+      try {
+        const res = await fetch('/api/game');
+        const data = await res.json();
+        setSessions(data);
+      } catch (error) {
+        console.error("Failed to load sessions:", error);
+      }
+    };
+    loadSessions();
+  }, []);
 
   // Timer countdown effect
   useEffect(() => {
@@ -81,13 +96,86 @@ export default function CourtRoom() {
         break;
       case 4:
         setMessages((prev) => [...prev, "🔨 Case closed! Game over."]);
+        // Auto-save when court consequence triggers
+        saveSession(true);
         break;
       default:
         break;
     }
   };
 
+  // Save session function
+  const saveSession = async (isAutoSave = false) => {
+    try {
+      const sessionData = {
+        timer,
+        messages,
+        stage,
+        output: code, // Save the current code as output
+        inputTimer,
+      };
+      
+      const res = await fetch('/api/game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sessionData),
+      });
+
+      if (res.ok) {
+        if (!isAutoSave) {
+          alert("✅ Session saved successfully!");
+        }
+        // Reload sessions
+        const sessionsRes = await fetch('/api/game');
+        const data = await sessionsRes.json();
+        setSessions(data);
+      }
+    } catch (error) {
+      console.error("Failed to save session:", error);
+      if (!isAutoSave) {
+        alert("❌ Failed to save session. Please try again.");
+      }
+    }
+  };
+
+  // Load a session
+  const loadSession = (session: any) => {
+    setTimer(session.timer);
+    setMessages(session.messages || []);
+    setStage(session.stage);
+    setCode(session.output || "console.log('Hello World')");
+    setInputTimer(session.inputTimer || 30);
+    setIsRunning(false);
+    alert(`📂 Session loaded: Stage ${session.stage}`);
+  };
+
+  // Delete a session
+  const deleteSession = async (id: number) => {
+    try {
+      const res = await fetch('/api/game', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+
+      if (res.ok) {
+        // Reload sessions
+        const sessionsRes = await fetch('/api/game');
+        const data = await sessionsRes.json();
+        setSessions(data);
+        alert("🗑️ Session deleted!");
+      }
+    } catch (error) {
+      console.error("Failed to delete session:", error);
+      alert("❌ Failed to delete session.");
+    }
+  };
+
   const newGame = () => {
+    // Save current session before starting new game
+    if (messages.length > 0) {
+      saveSession(true);
+    }
     resetTimer();
     setMessages([]);
     setStage(1);
@@ -237,7 +325,63 @@ export default function CourtRoom() {
           >
             🎮 New Game
           </button>
+          
+          <button
+            onClick={() => saveSession(false)}
+            className="ml-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg transition transform hover:scale-105"
+          >
+            💾 Save Session
+          </button>
         </div>
+
+        {/* Saved Sessions Section */}
+        {sessions.length > 0 && (
+          <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">
+              📚 Saved Sessions ({sessions.length})
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {sessions.map((session) => (
+                <div
+                  key={session.id}
+                  className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 p-4 rounded-lg border-2 border-blue-200 dark:border-gray-500"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-bold text-lg text-gray-800 dark:text-white">
+                      Stage {session.stage} of 4
+                    </h3>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {new Date(session.createdAt).toLocaleString()}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-1 text-sm text-gray-700 dark:text-gray-300 mb-3">
+                    <p>⏱️ Timer: {formatTime(session.timer)}</p>
+                    <p>📝 Messages: {session.messages?.length || 0}</p>
+                    <p className="font-mono text-xs truncate">
+                      💻 Code: {session.output?.substring(0, 30)}...
+                    </p>
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => loadSession(session)}
+                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded font-semibold text-sm transition"
+                    >
+                      📂 Load
+                    </button>
+                    <button
+                      onClick={() => deleteSession(session.id)}
+                      className="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded font-semibold text-sm transition"
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
