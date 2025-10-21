@@ -1,20 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Define the session type
+interface GameSession {
+  id: number;
+  timer: number;
+  messages: string[];
+  stage: number;
+  output?: string;
+  createdAt: string;
+}
+
 // Temporary in-memory storage (replace with database in Week 7)
-let gameSessions: any[] = [];
+let gameSessions: GameSession[] = [];
 
 // POST: Create a new game session (e.g., save timer, messages, stage, output)
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json(); // Expect { timer: number, messages: string[], stage: number, output?: string }
-    const newSession = {
+    const newSession: GameSession = {
       id: Date.now(), // Simple ID (use UUID in production)
-      ...body,
+      timer: body.timer,
+      messages: body.messages,
+      stage: body.stage,
+      output: body.output,
       createdAt: new Date().toISOString(),
     };
     gameSessions.push(newSession);
     return NextResponse.json(newSession, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to create session" }, { status: 500 });
   }
 }
@@ -23,7 +36,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     return NextResponse.json(gameSessions);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to retrieve sessions" }, { status: 500 });
   }
 }
@@ -38,7 +51,7 @@ export async function PUT(req: NextRequest) {
     }
     gameSessions[sessionIndex] = { ...gameSessions[sessionIndex], ...updates };
     return NextResponse.json(gameSessions[sessionIndex]);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to update session" }, { status: 500 });
   }
 }
@@ -49,7 +62,7 @@ export async function DELETE(req: NextRequest) {
     const { id } = await req.json();
     gameSessions = gameSessions.filter(s => s.id !== id);
     return NextResponse.json({ message: "Session deleted" });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to delete session" }, { status: 500 });
   }
 }

@@ -1,7 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
+
+interface GameSession {
+  id: number;
+  timer: number;
+  messages: string[];
+  stage: number;
+  output?: string;
+  inputTimer?: number;
+  createdAt: string;
+}
 
 export default function CourtRoom() {
   const [timer, setTimer] = useState(0); // Timer in seconds
@@ -10,7 +20,7 @@ export default function CourtRoom() {
   const [messages, setMessages] = useState<string[]>([]);
   const [stage, setStage] = useState(1);
   const [code, setCode] = useState("console.log('Hello World')");
-  const [sessions, setSessions] = useState<any[]>([]); // For loading sessions
+  const [sessions, setSessions] = useState<GameSession[]>([]); // For loading sessions
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Debug logging
@@ -39,7 +49,19 @@ export default function CourtRoom() {
         setTimer((prev) => {
           if (prev <= 1) {
             setIsRunning(false);
-            handleMessage();
+            // Trigger message when timer hits 0
+            setStage((currentStage) => {
+              if (currentStage < 4) {
+                setMessages((prevMessages) => [
+                  ...prevMessages,
+                  currentStage === 1 ? "⚖️ Court is now in session! You have a bug to fix." :
+                  currentStage === 2 ? "⏰ Time's up! The judge is waiting for your solution." :
+                  "⚡ Final warning! Submit your debugged code now!"
+                ]);
+                return currentStage + 1;
+              }
+              return currentStage;
+            });
             return 0;
           }
           return prev - 1;
@@ -71,41 +93,8 @@ export default function CourtRoom() {
     if (timerRef.current) clearInterval(timerRef.current);
   };
 
-  const handleMessage = () => {
-    switch (stage) {
-      case 1:
-        setMessages((prev) => [
-          ...prev,
-          "⚖️ Court is now in session! You have a bug to fix.",
-        ]);
-        setStage(2);
-        break;
-      case 2:
-        setMessages((prev) => [
-          ...prev,
-          "⏰ Time's up! The judge is waiting for your solution.",
-        ]);
-        setStage(3);
-        break;
-      case 3:
-        setMessages((prev) => [
-          ...prev,
-          "⚡ Final warning! Submit your debugged code now!",
-        ]);
-        setStage(4);
-        break;
-      case 4:
-        setMessages((prev) => [...prev, "🔨 Case closed! Game over."]);
-        // Auto-save when court consequence triggers
-        saveSession(true);
-        break;
-      default:
-        break;
-    }
-  };
-
-  // Save session function
-  const saveSession = async (isAutoSave = false) => {
+  // Save session function (define before handleMessage)
+  const saveSession = useCallback(async (isAutoSave = false) => {
     try {
       const sessionData = {
         timer,
@@ -136,10 +125,43 @@ export default function CourtRoom() {
         alert("❌ Failed to save session. Please try again.");
       }
     }
-  };
+  }, [timer, messages, stage, code, inputTimer]);
+
+  const handleMessage = useCallback(() => {
+    switch (stage) {
+      case 1:
+        setMessages((prev) => [
+          ...prev,
+          "⚖️ Court is now in session! You have a bug to fix.",
+        ]);
+        setStage(2);
+        break;
+      case 2:
+        setMessages((prev) => [
+          ...prev,
+          "⏰ Time's up! The judge is waiting for your solution.",
+        ]);
+        setStage(3);
+        break;
+      case 3:
+        setMessages((prev) => [
+          ...prev,
+          "⚡ Final warning! Submit your debugged code now!",
+        ]);
+        setStage(4);
+        break;
+      case 4:
+        setMessages((prev) => [...prev, "🔨 Case closed! Game over."]);
+        // Auto-save when court consequence triggers
+        saveSession(true);
+        break;
+      default:
+        break;
+    }
+  }, [stage, saveSession]);
 
   // Load a session
-  const loadSession = (session: any) => {
+  const loadSession = (session: GameSession) => {
     setTimer(session.timer);
     setMessages(session.messages || []);
     setStage(session.stage);
