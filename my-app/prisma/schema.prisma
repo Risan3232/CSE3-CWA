@@ -1,0 +1,21 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"  // Use SQLite for local dev (change to "postgresql" for production)
+  url      = env("DATABASE_URL")  // From .env file
+}
+
+model GameSession {
+  id        Int      @id @default(autoincrement())
+  timer     Int      // Timer value (e.g., 30 seconds)
+  messages  String   // JSON string of messages array (SQLite doesn't support arrays natively)
+  stage     Int      // Current stage (e.g., 1 for initial, escalating to court)
+  output    String?  // Optional: User-generated HTML output (e.g., from debugging)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

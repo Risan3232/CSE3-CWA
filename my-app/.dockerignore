@@ -48,3 +48,7 @@ README.md
 .cache
 .turbo
 .eslintcache
+
+# Don't ignore Prisma files - we need them!
+!prisma/
+!prisma/schema.prisma

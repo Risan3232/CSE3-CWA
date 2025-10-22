@@ -40,7 +40,10 @@ export default function Header({ studentNumber }: { studentNumber: string }) {
       href={href}
       className="nav-link"
       aria-current={activePath === href ? "page" : undefined}
-      onClick={() => setActivePath(href)}
+      onClick={() => {
+        setActivePath(href);
+        setOpen(false); // Close the hamburger menu when a link is clicked
+      }}
     >
       {label}
     </Link>
