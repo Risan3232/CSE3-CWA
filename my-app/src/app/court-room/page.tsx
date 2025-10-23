@@ -235,7 +235,7 @@ export default function CourtRoom() {
             Timer Control
           </h2>
           <div className="flex flex-col items-center space-y-4">
-            <div className="text-6xl font-mono font-bold text-blue-600 dark:text-blue-400">
+            <div id="timer-display" className="text-6xl font-mono font-bold text-blue-600 dark:text-blue-400">
               {formatTime(timer)}
             </div>
 
@@ -244,6 +244,7 @@ export default function CourtRoom() {
                 Set Timer (seconds):
               </label>
               <input
+                id="timer-input"
                 type="number"
                 value={inputTimer}
                 onChange={(e) => setInputTimer(Number(e.target.value))}
@@ -327,14 +328,13 @@ export default function CourtRoom() {
                 No messages yet. Start the game!
               </p>
             ) : (
-              messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className="bg-gray-100 dark:bg-gray-700 p-3 rounded text-gray-800 dark:text-white"
-                >
-                  {msg}
-                </div>
-              ))
+              <ul className="messages space-y-2">
+                {messages.map((msg, index) => (
+                  <li key={index} className="bg-gray-100 dark:bg-gray-700 p-3 rounded text-gray-800 dark:text-white">
+                    {msg}
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         </div>
@@ -362,12 +362,9 @@ export default function CourtRoom() {
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">
               📚 Saved Sessions ({sessions.length})
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ul className="sessions grid grid-cols-1 md:grid-cols-2 gap-4 list-none p-0">
               {sessions.map((session) => (
-                <div
-                  key={session.id}
-                  className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 p-4 rounded-lg border-2 border-blue-200 dark:border-gray-500"
-                >
+                <li key={session.id} className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 p-4 rounded-lg border-2 border-blue-200 dark:border-gray-500">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-bold text-lg text-gray-800 dark:text-white">
                       Stage {session.stage} of 4
@@ -399,9 +396,9 @@ export default function CourtRoom() {
                       🗑️ Delete
                     </button>
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         )}
       </div>
