@@ -11,12 +11,16 @@ export default function About() {
       <div style={{position:"relative", paddingTop:"56.25%", borderRadius:8, overflow:"hidden", border:"1px solid #555", background:"#000"}}>
         <iframe
           title="How to use this website"
-          src="https://www.youtube.com/watch?v=j7VIIsESEHo" 
+          // Use the embed URL (embed path) so the iframe displays correctly
+          src="https://www.youtube.com/embed/j7VIIsESEHo"
           style={{position:"absolute", inset:0, width:"100%", height:"100%", border:0}}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
         />
       </div>
+      <p style={{marginTop:8, fontSize:14}}>
+        <a href="https://youtu.be/j7VIIsESEHo" target="_blank" rel="noopener noreferrer">Open the video on YouTube</a>
+      </p>
     </div>
   );
 }
